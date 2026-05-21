@@ -1,23 +1,42 @@
-import logo from './logo.svg';
-import './App.css';
+import { useEffect, useState } from "react";
+import "./App.css";
+
+import BookForm from "./components/BookForm";
+import BookList from "./components/BookList";
 
 function App() {
+  const API_URL = "http://localhost:5000/api/books";
+
+  const [books, setBooks] = useState([]);
+  const [editingBook, setEditingBook] = useState(null);
+
+  async function loadBooks() {
+    const response = await fetch(API_URL);
+    const data = await response.json();
+    setBooks(data);
+  }
+
+  useEffect(() => {
+    loadBooks();
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="container">
+      <h1>Book Management App</h1>
+
+      <BookForm
+        API_URL={API_URL}
+        loadBooks={loadBooks}
+        editingBook={editingBook}
+        setEditingBook={setEditingBook}
+      />
+
+      <BookList
+        books={books}
+        API_URL={API_URL}
+        loadBooks={loadBooks}
+        setEditingBook={setEditingBook}
+      />
     </div>
   );
 }
